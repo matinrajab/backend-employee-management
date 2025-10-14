@@ -88,16 +88,16 @@ class EmployeeController extends Controller
             'photo' => $photo,
             'phone_number' => $request->phone_number,
             'npwp' => $request->npwp,
-            'birth_place_id' => $birthPlace ? $birthPlace->id : null,
-            'address_id' => $address ? $address->id : null,
-            'work_place_id' => $workPlace ? $workPlace->id : null,
-            'birth_date_id' => $birthDate ? $birthDate->id : null,
+            'birth_place_id' => $request->birth_place ? $birthPlace->id : null,
+            'address_id' => $request->address ? $address->id : null,
+            'work_place_id' => $request->work_place ? $workPlace->id : null,
+            'birth_date_id' => $request->birth_date ? $birthDate->id : null,
             'gender_id' => $request->gender_id,
             'golongan_id' => $request->golongan_id,
             'eselon_id' => $request->eselon_id,
-            'position_id' => $position ? $position->id : null,
+            'position_id' => $request->position ? $position->id : null,
             'religion_id' => $request->religion_id,
-            'work_unit_id' => $workUnit ? $workUnit->id : null,
+            'work_unit_id' => $request->work_unit ? $workUnit->id : null,
         ]);
 
         return ResponseFormatter::success(
