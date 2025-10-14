@@ -9,9 +9,14 @@ use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
+    private function employeeWithAttr()
+    {
+        return Employee::with(['birthDate', 'birthPlace', 'address', 'workPlace', 'eselon', 'gender', 'golongan', 'position', 'religion', 'workUnit']);
+    }
+
     public function index()
     {
-        $employees = Employee::with(['birthDate', 'birthPlace', 'address', 'workPlace', 'eselon', 'gender', 'golongan', 'position', 'religion', 'workUnit']);
+        $employees = $this->employeeWithAttr();
 
         return ResponseFormatter::success(
             $employees->paginate(10),
