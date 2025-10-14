@@ -113,7 +113,7 @@ class EmployeeController extends Controller
 
     public function update(EmployeeRequest $request, string $id)
     {
-        $employee  = Employee::findOrFail($id);
+        $employee = Employee::findOrFail($id);
 
         $birthPlaceOld = $employee->birthPlace;
         $addressOld = $employee->address;
@@ -210,7 +210,49 @@ class EmployeeController extends Controller
 
     public function destroy(string $id)
     {
-        //
+        $employee = Employee::findOrFail($id);
+
+        $birthPlaceOld = $employee->birthPlace;
+        $addressOld = $employee->address;
+        $birthDateOld = $employee->birthDate;
+        $positionOld = $employee->position;
+        $workPlaceOld = $employee->workPlace;
+        $workUnitOld = $employee->workUnit;
+
+        if ($employee->photo) {
+            Storage::disk('public')->delete('images/' . $employee->photo);
+        }
+
+        $employee->delete();
+
+        if ($birthPlaceOld && $birthPlaceOld->birthEmployees->count() == 0) {
+            $birthPlaceOld->delete();
+        }
+
+        if ($addressOld && $addressOld->addressEmployees->count() == 0) {
+            $addressOld->delete();
+        }
+
+        if ($birthDateOld && $birthDateOld->employees->count() == 0) {
+            $birthDateOld->delete();
+        }
+
+        if ($positionOld && $positionOld->employees->count() == 0) {
+            $positionOld->delete();
+        }
+
+        if ($workPlaceOld && $workPlaceOld->workEmployees->count() == 0) {
+            $workPlaceOld->delete();
+        }
+
+        if ($workUnitOld && $workUnitOld->employees->count() == 0) {
+            $workUnitOld->delete();
+        }
+
+        return ResponseFormatter::success(
+            null,
+            'Employee berhasil dihapus'
+        );
     }
 
     private function generateUniqueFileName($file)
