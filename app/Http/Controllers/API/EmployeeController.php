@@ -4,7 +4,16 @@ namespace App\Http\Controllers\API;
 
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\EmployeeRequest;
+use App\Models\BirthDate;
 use App\Models\Employee;
+use App\Models\Eselon;
+use App\Models\Gender;
+use App\Models\Golongan;
+use App\Models\Place;
+use App\Models\Position;
+use App\Models\Religion;
+use App\Models\WorkUnit;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
@@ -24,9 +33,72 @@ class EmployeeController extends Controller
         );
     }
 
-    public function store(Request $request)
+    public function store(EmployeeRequest $request)
     {
-        //
+        if ($request->birth_place) {
+            $birthPlace = Place::where('name', $request->birth_place)->first();
+            if (!$birthPlace) {
+                $birthPlace = Place::create(['name' => $request->birth_place]);
+            }
+        }
+
+        if ($request->address) {
+            $address = Place::where('name', $request->address)->first();
+            if (!$address) {
+                $address = Place::create(['name' => $request->address]);
+            }
+        }
+
+        if ($request->birth_date) {
+            $birthDate = BirthDate::where('date', $request->birth_date)->first();
+            if (!$birthDate) {
+                $birthDate = BirthDate::create(['date' => $request->birth_date]);
+            }
+        }
+
+        if ($request->position) {
+            $position = Position::where('name', $request->position)->first();
+            if (!$position) {
+                $position = Position::create(['name' => $request->position]);
+            }
+        }
+
+        if ($request->work_place) {
+            $workPlace = Place::where('name', $request->work_place)->first();
+            if (!$workPlace) {
+                $workPlace = Place::create(['name' => $request->work_place]);
+            }
+        }
+
+        if ($request->work_unit) {
+            $workUnit = WorkUnit::where('name', $request->work_unit)->first();
+            if (!$workUnit) {
+                $workUnit = WorkUnit::create(['name' => $request->work_unit]);
+            }
+        }
+
+        $employee = Employee::create([
+            'nip' => $request->nip,
+            'name' => $request->name,
+            'photo' => $request->photo,
+            'phone_number' => $request->phone_number,
+            'npwp' => $request->npwp,
+            'birth_place_id' => $birthPlace ? $birthPlace->id : null,
+            'address_id' => $address ? $address->id : null,
+            'work_place_id' => $workPlace ? $workPlace->id : null,
+            'birth_date_id' => $birthDate ? $birthDate->id : null,
+            'gender_id' => $request->gender_id,
+            'golongan_id' => $request->golongan_id,
+            'eselon_id' => $request->eselon_id,
+            'position_id' => $position ? $position->id : null,
+            'religion_id' => $request->religion_id,
+            'work_unit_id' => $workUnit ? $workUnit->id : null,
+        ]);
+
+        return ResponseFormatter::success(
+            $employee,
+            'Employee berhasil ditambahkan'
+        );
     }
 
     public function show(string $id)

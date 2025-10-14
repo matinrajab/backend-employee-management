@@ -11,3 +11,4 @@ Route::get('/user', function (Request $request) {
 
 
 Route::get('employees', [EmployeeController::class, 'index']);
+Route::post('employee', [EmployeeController::class, 'store']);
