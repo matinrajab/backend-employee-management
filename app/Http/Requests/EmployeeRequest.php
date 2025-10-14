@@ -24,7 +24,7 @@ class EmployeeRequest extends FormRequest
         return [
             'nip' => ['nullable', 'string', 'max:255', 'unique:employees'],
             'name' => ['nullable', 'string', 'max:255'],
-            'photo' => ['nullable', 'string', 'max:255'],
+            'photo' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp,gif,svg'],
             'phone_number' => ['nullable', 'string', 'max:255', 'unique:employees'],
             'npwp' => ['nullable', 'string', 'max:255', 'unique:employees'],
             'birth_place' => ['nullable', 'string', 'max:255'],
@@ -40,4 +40,3 @@ class EmployeeRequest extends FormRequest
         ];
     }
 }
-            // 'photo' => ['nullable', 'file', 'mimes:png,jpg,jpeg,webp,gif,svg'],

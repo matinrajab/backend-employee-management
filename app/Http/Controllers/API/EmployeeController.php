@@ -7,14 +7,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\EmployeeRequest;
 use App\Models\BirthDate;
 use App\Models\Employee;
-use App\Models\Eselon;
-use App\Models\Gender;
-use App\Models\Golongan;
 use App\Models\Place;
 use App\Models\Position;
-use App\Models\Religion;
 use App\Models\WorkUnit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class EmployeeController extends Controller
 {
@@ -77,10 +75,17 @@ class EmployeeController extends Controller
             }
         }
 
+        $photo = null;
+        if ($request->photo) {
+            $photo = $this->generateUniqueFileName($request->photo);
+
+            Storage::disk('public')->putFileAs('images', $request->photo, $photo);
+        }
+
         $employee = Employee::create([
             'nip' => $request->nip,
             'name' => $request->name,
-            'photo' => $request->photo,
+            'photo' => $photo,
             'phone_number' => $request->phone_number,
             'npwp' => $request->npwp,
             'birth_place_id' => $birthPlace ? $birthPlace->id : null,
@@ -114,5 +119,13 @@ class EmployeeController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    private function generateUniqueFileName($file)
+    {
+        $fileName = Str::random(40);
+        $extension = $file->extension();
+
+        return $fileName . '.' . $extension;
     }
 }
