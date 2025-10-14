@@ -11,10 +11,10 @@ class EmployeeController extends Controller
 {
     public function index()
     {
-        $employee = Employee::all();
+        $employees = Employee::with(['birthDate', 'birthPlace', 'address', 'workPlace', 'eselon', 'gender', 'golongan', 'position', 'religion', 'workUnit']);
 
         return ResponseFormatter::success(
-            $employee,
+            $employees->paginate(10),
             'Data list employee berhasil diambil'
         );
     }
