@@ -111,9 +111,101 @@ class EmployeeController extends Controller
         //
     }
 
-    public function update(Request $request, string $id)
+    public function update(EmployeeRequest $request, string $id)
     {
-        //
+        $employee  = Employee::findOrFail($id);
+
+        $birthPlaceOld = $employee->birthPlace;
+        $addressOld = $employee->address;
+        $birthDateOld = $employee->birthDate;
+        $positionOld = $employee->position;
+        $workPlaceOld = $employee->workPlace;
+        $workUnitOld = $employee->workUnit;
+
+        $birthPlace = Place::where('name', $request->birth_place)->first();
+        if (!$birthPlace && $request->birth_place) {
+            $birthPlace = Place::create(['name' => $request->birth_place]);
+        }
+
+        $address = Place::where('name', $request->address)->first();
+        if (!$address && $request->address) {
+            $address = Place::create(['name' => $request->address]);
+        }
+
+        $birthDate = BirthDate::where('date', $request->birth_date)->first();
+        if (!$birthDate) {
+            $birthDate = BirthDate::create(['date' => $request->birth_date]);
+        }
+
+        $position = Position::where('name', $request->position)->first();
+        if (!$position && $request->position) {
+            $position = Position::create(['name' => $request->position]);
+        }
+
+        $workPlace = Place::where('name', $request->work_place)->first();
+        if (!$workPlace && $request->work_place) {
+            $workPlace = Place::create(['name' => $request->work_place]);
+        }
+
+        $workUnit = WorkUnit::where('name', $request->work_unit)->first();
+        if (!$workUnit && $request->work_unit) {
+            $workUnit = WorkUnit::create(['name' => $request->work_unit]);
+        }
+
+        $photo = $employee->photo;
+        if ($request->photo) {
+            Storage::disk('public')->delete('images/' . $employee->photo);
+
+            $photo = $this->generateUniqueFileName($request->photo);
+            Storage::disk('public')->putFileAs('images', $request->photo, $photo);
+        }
+
+        $employee->update([
+            'nip' => $request->nip,
+            'name' => $request->name,
+            'photo' => $photo,
+            'phone_number' => $request->phone_number,
+            'npwp' => $request->npwp,
+            'birth_place_id' => $request->birth_place ? $birthPlace->id : null,
+            'address_id' => $request->address ? $address->id : null,
+            'work_place_id' => $request->work_place ? $workPlace->id : null,
+            'birth_date_id' => $request->birth_date ? $birthDate->id : null,
+            'gender_id' => $request->gender_id,
+            'golongan_id' => $request->golongan_id,
+            'eselon_id' => $request->eselon_id,
+            'position_id' => $request->position ? $position->id : null,
+            'religion_id' => $request->religion_id,
+            'work_unit_id' => $request->work_unit ? $workUnit->id : null,
+        ]);
+
+        if ($birthPlaceOld && $birthPlaceOld->birthEmployees->count() == 0) {
+            $birthPlaceOld->delete();
+        }
+
+        if ($addressOld && $addressOld->addressEmployees->count() == 0) {
+            $addressOld->delete();
+        }
+
+        if ($birthDateOld->employees->count() == 0) {
+            $birthDateOld->delete();
+        }
+
+        if ($positionOld && $positionOld->employees->count() == 0) {
+            $positionOld->delete();
+        }
+
+        if ($workPlaceOld && $workPlaceOld->workEmployees->count() == 0) {
+            $workPlaceOld->delete();
+        }
+
+        if ($workUnitOld && $workUnitOld->employees->count() == 0) {
+            $workUnitOld->delete();
+        }
+
+        return ResponseFormatter::success(
+            null,
+            'Employee berhasil diupdate'
+        );
     }
 
     public function destroy(string $id)
