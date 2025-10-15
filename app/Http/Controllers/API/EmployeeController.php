@@ -174,6 +174,17 @@ class EmployeeController extends Controller
         );
     }
 
+    public function showByWorkUnit(string $id)
+    {
+        $employees = $this->employeeWithAttr();
+        $employees->where('work_unit_id', $id);
+
+        return ResponseFormatter::success(
+            $employees->paginate(10),
+            'Data list employee berdasarkan unit kerja berhasil diambil'
+        );
+    }
+
     public function update(EmployeeRequest $request, string $id)
     {
         $employee = Employee::findOrFail($id);
