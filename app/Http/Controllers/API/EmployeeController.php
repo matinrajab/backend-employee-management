@@ -108,7 +108,13 @@ class EmployeeController extends Controller
 
     public function show(string $id)
     {
-        //
+        $employee = $this->employeeWithAttr();
+        $employee = $employee->findOrFail($id);
+
+        return ResponseFormatter::success(
+            $employee,
+            'Data employee berhasil diambil'
+        );
     }
 
     public function update(EmployeeRequest $request, string $id)
