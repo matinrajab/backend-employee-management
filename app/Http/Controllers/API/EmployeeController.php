@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EmployeeRequest;
+use App\Http\Requests\SearchEmployeeRequest;
 use App\Models\BirthDate;
 use App\Models\Employee;
 use App\Models\Place;
@@ -28,6 +29,62 @@ class EmployeeController extends Controller
         return ResponseFormatter::success(
             $employees->paginate(10),
             'Data list employee berhasil diambil'
+        );
+    }
+
+    public function search(SearchEmployeeRequest $request)
+    {
+        $name = $request->name;
+        $nip = $request->nip;
+        $phoneNumber = $request->phone_number;
+        $npwp = $request->npwp;
+        $workPlaceId = $request->work_place_id;
+        $golonganId = $request->golongan_id;
+        $eselonId = $request->eselon_id;
+        $positionId = $request->position_id;
+        $workUnitId = $request->work_unit_id;
+
+        $employees = $this->employeeWithAttr();
+
+        if ($name) {
+            $employees->where('name', 'like', '%' . $name . '%');
+        }
+
+        if ($nip) {
+            $employees->where('nip', 'like', '%' . $nip . '%');
+        }
+
+        if ($phoneNumber) {
+            $employees->where('phone_number', 'like', '%' . $phoneNumber . '%');
+        }
+
+        if ($npwp) {
+            $employees->where('npwp', 'like', '%' . $npwp . '%');
+        }
+
+        if ($workPlaceId) {
+            $employees->where('work_place_id', $workPlaceId);
+        }
+
+        if ($golonganId) {
+            $employees->where('golongan_id', $golonganId);
+        }
+
+        if ($eselonId) {
+            $employees->where('eselon_id', $eselonId);
+        }
+
+        if ($positionId) {
+            $employees->where('position_id', $positionId);
+        }
+
+        if ($workUnitId) {
+            $employees->where('work_unit_id', $workUnitId);
+        }
+
+        return ResponseFormatter::success(
+            $employees->paginate(10),
+            'Pencarian employee berhasil'
         );
     }
 
