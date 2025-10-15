@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EmployeeRequest;
 use App\Http\Requests\SearchEmployeeRequest;
+use App\Http\Resources\EmployeeResource;
 use App\Models\BirthDate;
 use App\Models\Employee;
 use App\Models\Place;
@@ -24,12 +24,9 @@ class EmployeeController extends Controller
 
     public function index()
     {
-        $employees = $this->employeeWithAttr();
+        $employees = $this->employeeWithAttr()->paginate(10);
 
-        return ResponseFormatter::success(
-            $employees->paginate(10),
-            'Data list employee berhasil diambil'
-        );
+        return EmployeeResource::collection($employees);
     }
 
     public function search(SearchEmployeeRequest $request)
@@ -82,10 +79,7 @@ class EmployeeController extends Controller
             $employees->where('work_unit_id', $workUnitId);
         }
 
-        return ResponseFormatter::success(
-            $employees->paginate(10),
-            'Pencarian employee berhasil'
-        );
+        return EmployeeResource::collection($employees->paginate(10));
     }
 
     public function store(EmployeeRequest $request)
@@ -157,21 +151,14 @@ class EmployeeController extends Controller
             'work_unit_id' => $request->work_unit ? $workUnit->id : null,
         ]);
 
-        return ResponseFormatter::success(
-            $employee,
-            'Employee berhasil ditambahkan'
-        );
+        return new EmployeeResource($employee);
     }
 
     public function show(string $id)
     {
-        $employee = $this->employeeWithAttr();
-        $employee = $employee->findOrFail($id);
+        $employee = $this->employeeWithAttr()->findOrFail($id);
 
-        return ResponseFormatter::success(
-            $employee,
-            'Data employee berhasil diambil'
-        );
+        return new EmployeeResource($employee);
     }
 
     public function showByWorkUnit(string $id)
@@ -179,10 +166,7 @@ class EmployeeController extends Controller
         $employees = $this->employeeWithAttr();
         $employees->where('work_unit_id', $id);
 
-        return ResponseFormatter::success(
-            $employees->paginate(10),
-            'Data list employee berdasarkan unit kerja berhasil diambil'
-        );
+        return EmployeeResource::collection($employees->paginate(10));
     }
 
     public function update(EmployeeRequest $request, string $id)
@@ -252,34 +236,31 @@ class EmployeeController extends Controller
             'work_unit_id' => $request->work_unit ? $workUnit->id : null,
         ]);
 
-        if ($birthPlaceOld && $birthPlaceOld->birthEmployees->count() == 0) {
+        if ($birthPlaceOld && !$birthPlaceOld->birthEmployees()->exists()) {
             $birthPlaceOld->delete();
         }
 
-        if ($addressOld && $addressOld->addressEmployees->count() == 0) {
+        if ($addressOld && !$addressOld->addressEmployees()->exists()) {
             $addressOld->delete();
         }
 
-        if ($birthDateOld->employees->count() == 0) {
+        if (!$birthDateOld->employees()->exists()) {
             $birthDateOld->delete();
         }
 
-        if ($positionOld && $positionOld->employees->count() == 0) {
+        if ($positionOld && !$positionOld->employees()->exists()) {
             $positionOld->delete();
         }
 
-        if ($workPlaceOld && $workPlaceOld->workEmployees->count() == 0) {
+        if ($workPlaceOld && !$workPlaceOld->workEmployees()->exists()) {
             $workPlaceOld->delete();
         }
 
-        if ($workUnitOld && $workUnitOld->employees->count() == 0) {
+        if ($workUnitOld && !$workUnitOld->employees()->exists()) {
             $workUnitOld->delete();
         }
 
-        return ResponseFormatter::success(
-            null,
-            'Employee berhasil diupdate'
-        );
+        return response()->json(['message' => 'Employee berhasil diupdate']);
     }
 
     public function destroy(string $id)
@@ -299,34 +280,31 @@ class EmployeeController extends Controller
 
         $employee->delete();
 
-        if ($birthPlaceOld && $birthPlaceOld->birthEmployees->count() == 0) {
+        if ($birthPlaceOld && !$birthPlaceOld->birthEmployees()->exists()) {
             $birthPlaceOld->delete();
         }
 
-        if ($addressOld && $addressOld->addressEmployees->count() == 0) {
+        if ($addressOld && !$addressOld->addressEmployees()->exists()) {
             $addressOld->delete();
         }
 
-        if ($birthDateOld && $birthDateOld->employees->count() == 0) {
+        if (!$birthDateOld->employees()->exists()) {
             $birthDateOld->delete();
         }
 
-        if ($positionOld && $positionOld->employees->count() == 0) {
+        if ($positionOld && !$positionOld->employees()->exists()) {
             $positionOld->delete();
         }
 
-        if ($workPlaceOld && $workPlaceOld->workEmployees->count() == 0) {
+        if ($workPlaceOld && !$workPlaceOld->workEmployees()->exists()) {
             $workPlaceOld->delete();
         }
 
-        if ($workUnitOld && $workUnitOld->employees->count() == 0) {
+        if ($workUnitOld && !$workUnitOld->employees()->exists()) {
             $workUnitOld->delete();
         }
 
-        return ResponseFormatter::success(
-            null,
-            'Employee berhasil dihapus'
-        );
+        return response()->json(['message' => 'Employee berhasil dihapus']);
     }
 
     private function generateUniqueFileName($file)
