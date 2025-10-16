@@ -10,6 +10,10 @@ use App\Models\BirthDate;
 use App\Models\Employee;
 use App\Models\Place;
 use App\Models\Position;
+use App\Models\Gender;
+use App\Models\Golongan;
+use App\Models\Eselon;
+use App\Models\Religion;
 use App\Models\WorkUnit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -31,6 +35,7 @@ class EmployeeController extends Controller
 
     public function search(SearchEmployeeRequest $request)
     {
+
         $name = $request->name;
         $nip = $request->nip;
         $phoneNumber = $request->phone_number;
@@ -80,6 +85,21 @@ class EmployeeController extends Controller
         }
 
         return EmployeeResource::collection($employees->paginate(10));
+    }
+
+    public function create()
+    {
+        $genders = Gender::all();
+        $golongans = Golongan::all();
+        $eselons = Eselon::all();
+        $religions = Religion::all();
+
+        return response()->json([
+            'genders' => $genders,
+            'golongans' => $golongans,
+            'eselons' => $eselons,
+            'religions' => $religions
+        ]);
     }
 
     public function store(EmployeeRequest $request)

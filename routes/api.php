@@ -17,4 +17,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('work-unit/{id}', [EmployeeController::class, 'showByWorkUnit']);
     Route::put('employee/{id}', [EmployeeController::class, 'update']);
     Route::delete('employee/{id}', [EmployeeController::class, 'destroy']);
+    Route::get('employee-create', [EmployeeController::class, 'create']);
 });
