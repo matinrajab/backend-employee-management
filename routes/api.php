@@ -2,6 +2,7 @@
 
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\API\EmployeeController;
+use App\Http\Controllers\API\PDFController;
 use App\Http\Controllers\API\WorkUnitController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -22,4 +23,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('filter', [EmployeeController::class, 'filter']);
 
     Route::get('work-units', [WorkUnitController::class, 'index']);
+
+    Route::get('generate-pdf', [PDFController::class, 'generatePDF']);
 });
