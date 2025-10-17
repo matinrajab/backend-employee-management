@@ -2,6 +2,7 @@
 
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\API\EmployeeController;
+use App\Http\Controllers\API\WorkUnitController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,4 +19,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('employee/{id}', [EmployeeController::class, 'update']);
     Route::delete('employee/{id}', [EmployeeController::class, 'destroy']);
     Route::get('employee-create', [EmployeeController::class, 'create']);
+
+    Route::get('work-units', [WorkUnitController::class, 'index']);
 });
