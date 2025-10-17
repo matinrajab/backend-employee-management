@@ -33,6 +33,21 @@ class EmployeeController extends Controller
         return EmployeeResource::collection($employees);
     }
 
+    public function filter()
+    {
+        $golongans = Golongan::all();
+        $eselons = Eselon::all();
+        $positions = Position::all();
+        $workUnit = WorkUnit::all();
+
+        return response()->json([
+            'golongans' => $golongans,
+            'eselons' => $eselons,
+            'positions' => $positions,
+            'work_units' => $workUnit,
+        ]);
+    }
+
     public function search(SearchEmployeeRequest $request)
     {
 
